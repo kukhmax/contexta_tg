@@ -5,6 +5,7 @@ import './App.css';
 import './i18n';
 
 import Vocabulary from './pages/Vocabulary';
+import Premium from './pages/Premium';
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="vocabulary" element={<Vocabulary />} />
           <Route path="history" element={<div className="container"><h2>History</h2><p>Coming soon...</p></div>} />
-          <Route path="profile" element={<div className="container"><h2>Profile</h2><p>Coming soon...</p></div>} />
+          <Route path="profile" element={<Premium />} />
         </Route>
       </Routes>
     </HashRouter>
