@@ -28,10 +28,16 @@ async def generate_story(
     Генерация истории с помощью AI.
     
     1. Ищет пользователя по telegram_id
-    2. Отправляет запрос в LLM (Groq)
-    3. Сохраняет историю в БД
-    4. Возвращает результат
+    2. Проверяет лимиты (5 запросов в день)
+    3. Отправляет запрос в LLM (Groq)
+    4. Сохраняет историю в БД
+    5. Возвращает результат
     """
+    from app.core.rate_limit import check_rate_limit
+    
+    # Проверка лимитов (5 историй в день для MVP)
+    await check_rate_limit(request.telegram_id, limit=5)
+
     # 1. Поиск пользователя
     user = db.query(User).filter(User.telegram_id == request.telegram_id).first()
     if not user:
