@@ -1,0 +1,76 @@
+services:
+  # Database
+  db:
+    image: postgres:15
+    restart: always
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-contexta}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - app_network
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    restart: always
+    volumes:
+      - redis_data_prod:/data
+    networks:
+      - app_network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+    restart: always
+    command: sh -c "alembic upgrade head && gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - app_network
+
+  # Telegram Bot
+  bot:
+    build:
+      context: ./backend
+    restart: always
+    command: python -m app.bot.main
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+      - backend
+    networks:
+      - app_network
+
+  # Frontend & Nginx (Gateway)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443" # Expecting SSL certs to be mounted if configured, usually handle SSL one level up or here
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
+volumes:
+  postgres_data_prod:
+  redis_data_prod:
+
+
+networks:
+  app_network:
+    driver: bridge
