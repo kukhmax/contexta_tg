@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+sqlalchemy
+asyncpg
+alembic
+pydantic-settings
+aiogram
+redis
+groq
+python-dotenv
