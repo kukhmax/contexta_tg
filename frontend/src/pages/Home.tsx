@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import WebApp from '@twa-dev/sdk';
+import AudioPlayer from '../components/AudioPlayer';
 
 const Home: React.FC = () => {
     const { t } = useTranslation();
@@ -148,6 +149,8 @@ const Home: React.FC = () => {
                                 );
                             })}
                         </p>
+
+                        <AudioPlayer storyId={story.id} targetLang={story.target_language} />
                     </div>
                 </div>
             )}
