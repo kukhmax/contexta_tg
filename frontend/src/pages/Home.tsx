@@ -138,10 +138,33 @@ const Home: React.FC = () => {
                                 return (
                                     <span
                                         key={index}
+                                        onClick={async () => {
+                                            if (!isHighlighted) return;
+                                            if (confirm(`Save "${cleanWord}" to vocabulary?`)) {
+                                                try {
+                                                    const telegramId = WebApp.initDataUnsafe.user?.id || 123456789;
+                                                    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+                                                    await fetch(`${API_URL}/api/v1/words/`, {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({
+                                                            word: cleanWord,
+                                                            context: story.content, // Save full text as context for now or snippet
+                                                            telegram_id: telegramId
+                                                        })
+                                                    });
+                                                    alert("Saved!");
+                                                } catch (e) {
+                                                    alert("Error saving");
+                                                }
+                                            }
+                                        }}
                                         style={isHighlighted ? {
                                             color: '#fbbf24',
                                             fontWeight: 'bold',
-                                            textShadow: '0 0 5px rgba(251, 191, 36, 0.3)'
+                                            textShadow: '0 0 5px rgba(251, 191, 36, 0.3)',
+                                            cursor: 'pointer',
+                                            borderBottom: '1px dashed #fbbf24'
                                         } : {}}
                                     >
                                         {word}{' '}

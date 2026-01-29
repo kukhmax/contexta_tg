@@ -51,6 +51,9 @@ const Layout: React.FC = () => {
                 <button onClick={() => navigate('/history')} style={{ background: 'none', border: 'none', color: 'var(--color-text-primary)' }}>
                     📜
                 </button>
+                <button onClick={() => navigate('/vocabulary')} style={{ background: 'none', border: 'none', color: 'var(--color-text-primary)' }}>
+                    📚
+                </button>
                 <button onClick={() => navigate('/profile')} style={{ background: 'none', border: 'none', color: 'var(--color-text-primary)' }}>
                     👤
                 </button>
