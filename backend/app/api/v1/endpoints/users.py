@@ -12,12 +12,12 @@ def read_users_me(
     db: Session = Depends(get_db)
 ):
     """
-    Get current user by telegram_id. 
-    TODO: Add proper JWT or Session auth later, for now relying on telegram_id passed ensuring it matches validated session context in a real app.
-    For this MVP, we might trust the client side IF we validate initData on every request OR issue a JWT on login.
-    For simplicity in MVP Step 3, we will just return user by ID, assuming /login was called first.
+    Получение профиля текущего пользователя по telegram_id.
+    
+    TODO: В будущем добавить JWT авторизацию или сессии. 
+    Пока для MVP мы доверяем клиенту, предполагая, что /auth/login прошел успешно.
     """
     user = user_service.get_user_by_telegram_id(db, telegram_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
     return user

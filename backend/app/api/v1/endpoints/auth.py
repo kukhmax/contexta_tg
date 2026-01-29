@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Body
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api.deps import get_db
 from app.core.security import validate_telegram_data
@@ -18,25 +18,27 @@ def login_telegram(
     db: Session = Depends(get_db)
 ):
     """
-    Authenticate user via Telegram Web App initData.
-    Creates user if not exists.
+    Аутентификация пользователя через initData от Telegram Web App.
+    Если пользователь не существует, он будет создан автоматически.
+    
+    - **initData**: Строка инициализации, полученная от Telegram Mini App
     """
     if not settings.BOT_TOKEN:
-        raise HTTPException(status_code=500, detail="Bot token not configured")
+        raise HTTPException(status_code=500, detail="Токен бота не настроен (BOT_TOKEN)")
 
-    # Validate initData
+    # Валидация initData
     user_data = validate_telegram_data(auth_data.initData, settings.BOT_TOKEN)
     if not user_data:
-        raise HTTPException(status_code=401, detail="Invalid authentication data")
+        raise HTTPException(status_code=401, detail="Неверные данные аутентификации (Invalid auth data)")
     
     tg_user = user_data.get("user")
     if not tg_user:
-        raise HTTPException(status_code=400, detail="User data missing in initData")
+        raise HTTPException(status_code=400, detail="В initData отсутствуют данные пользователя")
 
-    # Check if user exists
+    # Проверяем, существует ли пользователь
     user = user_service.get_user_by_telegram_id(db, tg_user["id"])
     if not user:
-        # Create new user
+        # Создаем нового пользователя
         user_in = UserCreate(
             telegram_id=tg_user["id"],
             username=tg_user.get("username"),
