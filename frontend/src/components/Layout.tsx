@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import WebApp from '@twa-dev/sdk';
 
 const Layout: React.FC = () => {
-    const { t, i18n } = useTranslation();
+    const { i18n } = useTranslation();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -13,7 +13,12 @@ const Layout: React.FC = () => {
         WebApp.expand();
 
         // Установка цвета хедера
-        WebApp.setHeaderColor(getComputedStyle(document.documentElement).getPropertyValue('--color-bg-primary') || '#0F0F13');
+        const color = getComputedStyle(document.documentElement).getPropertyValue('--color-bg-primary').trim();
+        if (color) {
+            WebApp.setHeaderColor(color as any);
+        } else {
+            WebApp.setHeaderColor('#0F0F13');
+        }
 
         // Адаптация языка приложения под язык Telegram
         if (WebApp.initDataUnsafe.user?.language_code === 'en') {
