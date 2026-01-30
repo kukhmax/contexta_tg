@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import WebApp from '@twa-dev/sdk';
 
 interface AudioPlayerProps {
@@ -7,7 +8,7 @@ interface AudioPlayerProps {
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ storyId }) => {
-    // const { t } = useTranslation(); // Not used currently
+    const { t } = useTranslation();
     const [isPlaying, setIsPlaying] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const [audioSrc, setAudioSrc] = useState<string | null>(null);
@@ -63,7 +64,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ storyId }) => {
                 style={{ width: 'auto', padding: '8px 16px', fontSize: '14px', borderRadius: '20px' }}
                 disabled={isLoading}
             >
-                {isLoading ? '⏳ ...' : (isPlaying ? '⏸ Pause' : '▶️ Listen')}
+                {isLoading ? '⏳ ...' : (isPlaying ? '⏸ Pause' : `▶️ ${t('listen')}`)}
             </button>
 
             {audioSrc && (

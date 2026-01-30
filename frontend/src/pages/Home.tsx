@@ -59,13 +59,22 @@ const Home: React.FC = () => {
 
     return (
         <div className="home-page">
-            <header style={{ marginBottom: '24px' }}>
-                <h1 style={{ fontSize: '28px', color: 'var(--color-accent-primary)' }}>
-                    Contexta
-                </h1>
-                <p style={{ color: 'var(--color-text-secondary)' }}>
-                    {t('welcome')}, {WebApp.initDataUnsafe.user?.first_name || 'Guest'}!
-                </p>
+            {/* Header with Language Switcher */}
+            <header style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                    <h1 style={{ fontSize: '28px', color: 'var(--color-accent-primary)', margin: 0 }}>
+                        Contexta
+                    </h1>
+                    <p style={{ color: 'var(--color-text-secondary)', margin: 0 }}>
+                        {t('welcome')}, {WebApp.initDataUnsafe.user?.first_name || 'Guest'}!
+                    </p>
+                </div>
+                <button
+                    onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'ru' : 'en')}
+                    style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}
+                >
+                    {i18n.language === 'en' ? '🇺🇸' : '🇷🇺'}
+                </button>
             </header>
 
             {!story ? (
@@ -83,6 +92,8 @@ const Home: React.FC = () => {
                             <option value="es">Español</option>
                             <option value="pl">Polski</option>
                         </select>
+
+                        {/* ... rest of the form ... */}
 
                         <label style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>{t('select_level')}</label>
                         <select
@@ -130,51 +141,49 @@ const Home: React.FC = () => {
                         <h3 style={{ color: 'var(--color-accent-primary)', marginBottom: '8px' }}>
                             {story.input_word} ({story.language_level})
                         </h3>
-                        <p style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6', fontSize: '18px' }}>
-                            {/* Simple highlighting */}
-                            {story.content.split(' ').map((word: string, index: number) => {
-                                const cleanWord = word.replace(/[.,!?]/g, '').toLowerCase();
-                                const isHighlighted = story.highlighted_words.some((hw: string) =>
-                                    hw.toLowerCase() === cleanWord || cleanWord.includes(hw.toLowerCase())
-                                );
-
-                                return (
-                                    <span
-                                        key={index}
-                                        onClick={async () => {
-                                            if (!isHighlighted) return;
-                                            if (confirm(`Save "${cleanWord}" to vocabulary?`)) {
-                                                try {
-                                                    const telegramId = WebApp.initDataUnsafe.user?.id || 123456789;
-                                                    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-                                                    await fetch(`${API_URL}/api/v1/words/`, {
-                                                        method: 'POST',
-                                                        headers: { 'Content-Type': 'application/json' },
-                                                        body: JSON.stringify({
-                                                            word: cleanWord,
-                                                            context: story.content, // Save full text as context for now or snippet
-                                                            telegram_id: telegramId
-                                                        })
-                                                    });
-                                                    alert("Saved!");
-                                                } catch (e) {
-                                                    alert("Error saving");
+                        <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6', fontSize: '18px' }}>
+                            {/* Render content with <b> tags */}
+                            {story.content.split(/(<b>.*?<\/b>)/g).map((part: string, index: number) => {
+                                if (part.startsWith('<b>') && part.endsWith('</b>')) {
+                                    const cleanWord = part.replace(/<\/?b>/g, '');
+                                    return (
+                                        <span
+                                            key={index}
+                                            onClick={async () => {
+                                                if (confirm(`Save "${cleanWord}" to vocabulary?`)) {
+                                                    try {
+                                                        const telegramId = WebApp.initDataUnsafe.user?.id || 123456789;
+                                                        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+                                                        await fetch(`${API_URL}/api/v1/words/`, {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({
+                                                                word: cleanWord,
+                                                                context: story.content.replace(/<\/?b>/g, ''), // Store without tags
+                                                                telegram_id: telegramId
+                                                            })
+                                                        });
+                                                        alert("Saved!");
+                                                    } catch (e) {
+                                                        alert("Error saving");
+                                                    }
                                                 }
-                                            }
-                                        }}
-                                        style={isHighlighted ? {
-                                            color: '#fbbf24',
-                                            fontWeight: 'bold',
-                                            textShadow: '0 0 5px rgba(251, 191, 36, 0.3)',
-                                            cursor: 'pointer',
-                                            borderBottom: '1px dashed #fbbf24'
-                                        } : {}}
-                                    >
-                                        {word}{' '}
-                                    </span>
-                                );
+                                            }}
+                                            style={{
+                                                color: '#fbbf24',
+                                                fontWeight: 'bold',
+                                                textShadow: '0 0 5px rgba(251, 191, 36, 0.3)',
+                                                cursor: 'pointer',
+                                                borderBottom: '1px dashed #fbbf24'
+                                            }}
+                                        >
+                                            {cleanWord}
+                                        </span>
+                                    );
+                                }
+                                return <span key={index}>{part}</span>;
                             })}
-                        </p>
+                        </div>
 
                         <AudioPlayer storyId={story.id} targetLang={story.target_language} />
 

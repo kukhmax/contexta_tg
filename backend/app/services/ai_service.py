@@ -41,7 +41,7 @@ async def generate_story_with_ai(word: str, level: str, target_lang: str, native
         - Sentences should be short and clear for lower levels (A1–A2).
 
         STORY CONSTRAINTS:
-        - Length: 100–120 words.
+        - Length: 100–150 words.
         - The story must feel natural and engaging, not like an exercise.
         - The target word forms must be naturally integrated into the story.
 

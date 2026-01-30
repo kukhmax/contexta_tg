@@ -28,9 +28,13 @@ async def get_story_audio(
         raise HTTPException(status_code=403, detail="Not authorized to access this story")
 
     try:
+        # Clean content from HTML tags for TTS
+        import re
+        clean_content = re.sub(r'<[^>]+>', '', story.content)
+        
         # Генерация аудио
         # Используем язык истории или целевой язык? Логичнее читать на целевом языке.
-        file_path = await tts_service.generate_audio_file(story.content, story.target_language)
+        file_path = await tts_service.generate_audio_file(clean_content, story.target_language)
         
         # Возвращаем файл и удаляем его после отправки (через BackgroundTask можно, 
         # но FileResponse с background=cleanup лучше)
