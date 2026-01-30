@@ -10,12 +10,8 @@ async def generate_story_with_ai(word: str, level: str, target_lang: str, native
     Генерирует историю через Groq API.
     Возвращает словарь с текстом истории и списком выделенных слов.
     """
-    if not settings.GROQ_API_KEY:
-        raise ValueError("API Key for Groq is not configured / Ключ Groq API не настроен")
-
-    client = Groq(api_key=settings.GROQ_API_KEY)
     
-    # Промпт для генерации
+    # Общий системный промпт (Prompt)
     prompt = f"""
         You are an experienced professional language teacher and curriculum designer.
 
@@ -69,26 +65,52 @@ async def generate_story_with_ai(word: str, level: str, target_lang: str, native
         - Output MUST be valid JSON and nothing else.
         """
 
-
     try:
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a helpful assistant that outputs only JSON."
-                },
-                {
-                    "role": "user",
-                    "content": prompt,
-                }
-            ],
-            model="llama-3.3-70b-versatile", # Using Llama 3.3 for generation
-            temperature=0.7,
-            response_format={"type": "json_object"},
-        )
-        
-        response_content = chat_completion.choices[0].message.content
-        return json.loads(response_content)
+        # Логика выбора провайдера AI (Groq или Gemini)
+        if settings.IS_GEMINI:
+            import google.generativeai as genai
+            
+            if not settings.GEMINI_API_KEY:
+                raise ValueError("API Key for Gemini is not configured / Ключ Gemini API не настроен")
+                
+            genai.configure(api_key=settings.GEMINI_API_KEY)
+            model = genai.GenerativeModel('gemini-2.0-flash') # Используем быструю и новую модель
+            
+            # Gemini иногда любит добавлять markdown блоки ```json ... ```, нужно парсить аккуратно
+            # Добавляем инструкцию для JSON формата в chat
+            response = model.generate_content(
+                f"You are a helpful assistant that outputs only valid JSON.\n{prompt}",
+                generation_config={"response_mime_type": "application/json"}
+            )
+            
+            response_content = response.text
+            return json.loads(response_content)
+            
+        else:
+            # Использование Groq API (по умолчанию)
+            if not settings.GROQ_API_KEY:
+                raise ValueError("API Key for Groq is not configured / Ключ Groq API не настроен")
+
+            client = Groq(api_key=settings.GROQ_API_KEY)
+            
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a helpful assistant that outputs only JSON."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt,
+                    }
+                ],
+                model="llama-3.3-70b-versatile", # Используем Llama 3.3
+                temperature=0.7,
+                response_format={"type": "json_object"},
+            )
+            
+            response_content = chat_completion.choices[0].message.content
+            return json.loads(response_content)
         
     except Exception as e:
         logger.error(f"Error generating story: {e}")

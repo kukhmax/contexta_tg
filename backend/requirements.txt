@@ -11,3 +11,4 @@ python-dotenv
 psycopg2-binary
 edge-tts
 aiofiles
+google-generativeai

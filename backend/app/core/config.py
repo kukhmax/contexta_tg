@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     BOT_TOKEN: Optional[str] = None     # Токен Telegram бота
     GROQ_API_KEY: Optional[str] = None  # Ключ API для AI генерации
     
+    # Gemini Configuration
+    IS_GEMINI: bool = False             # Флаг использования Gemini вместо Groq
+    GEMINI_API_KEY: Optional[str] = None # Ключ API для Google Gemini
+    
     class Config:
         env_file = ".env"
 
