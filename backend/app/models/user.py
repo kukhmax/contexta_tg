@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer, String, DateTime, Enum
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import DeclarativeBase
 from datetime import datetime
 import enum
 
-Base = declarative_base()
+class Base(DeclarativeBase):
+    pass
 
 class UserRole(enum.Enum):
     USER = "user"       # Обычный пользователь

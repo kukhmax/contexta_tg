@@ -19,11 +19,12 @@ async def generate_story_with_ai(word: str, level: str, target_lang: str, native
     prompt = f"""
     You are a professional language teacher.
     Create a short, engaging story ({level} level) in {target_lang} that naturally uses the word/phrase "{word}".
+    IMPORTANT: You MUST use the word "{word}" at least 3 times in the story, utilizing DIFFERENT grammatical forms (conjugations, pluralizations, cases, etc.) where possible.
     The story should be 100-150 words long.
     
     Output format must be strictly JSON with keys:
     - "content": the story text in {target_lang}
-    - "highlighted_words": a list of strings (including the target word "{word}" and 2-3 other useful vocabulary words from the story).
+    - "highlighted_words": a list of strings containing ONLY the different forms of the word "{word}" used in the text. Do NOT include any other vocabulary words.
 
     Do not include any other text, only the JSON.
     """
@@ -40,7 +41,7 @@ async def generate_story_with_ai(word: str, level: str, target_lang: str, native
                     "content": prompt,
                 }
             ],
-            model="mixtral-8x7b-32768", # Используем Mixtral, так как он быстр и качественен
+            model="llama-3.3-70b-versatile", # Mixtral deprecated, using Llama 3.3
             temperature=0.7,
             response_format={"type": "json_object"},
         )

@@ -7,6 +7,8 @@ services:
     container_name: contexta_backend
     volumes:
       - ./backend:/app
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/contexta
       - REDIS_URL=redis://redis:6379/0
@@ -23,6 +25,8 @@ services:
     container_name: contexta_bot
     volumes:
       - ./backend:/app
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/contexta
       - REDIS_URL=redis://redis:6379/0

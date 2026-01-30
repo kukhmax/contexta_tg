@@ -33,15 +33,18 @@ async def generate_story(
     4. Сохраняет историю в БД
     5. Возвращает результат
     """
-    from app.core.rate_limit import check_rate_limit
-    
-    # Проверка лимитов (5 историй в день для MVP)
-    await check_rate_limit(request.telegram_id, limit=5)
-
     # 1. Поиск пользователя
     user = db.query(User).filter(User.telegram_id == request.telegram_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
+
+    from app.models.user import SubscriptionTier
+    from app.core.rate_limit import check_rate_limit
+    
+    # Проверка лимитов (5 историй в день для Free, безлимит для Premium)
+    if user.tier != SubscriptionTier.PREMIUM:
+        # Для Free тарифа
+        await check_rate_limit(request.telegram_id, limit=5)
 
     # 2. Генерация
     try:
