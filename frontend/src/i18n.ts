@@ -17,7 +17,8 @@ const resources = {
             "error": "Something went wrong",
             "show_translation": "Show Translation",
             "hide_translation": "Hide Translation",
-            "listen": "Listen"
+            "listen": "Listen",
+            "my_vocabulary": "My Vocabulary"
         }
     },
     ru: {
@@ -34,7 +35,8 @@ const resources = {
             "error": "Что-то пошло не так",
             "show_translation": "Показать перевод",
             "hide_translation": "Скрыть перевод",
-            "listen": "Слушать"
+            "listen": "Слушать",
+            "my_vocabulary": "Мой Словарь"
         }
     }
 };

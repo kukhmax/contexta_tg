@@ -160,7 +160,8 @@ const Home: React.FC = () => {
                                                             body: JSON.stringify({
                                                                 word: cleanWord,
                                                                 context: story.content.replace(/<\/?b>/g, ''), // Store without tags
-                                                                telegram_id: telegramId
+                                                                telegram_id: telegramId,
+                                                                native_language: i18n.language // Pass interface language for translation
                                                             })
                                                         });
                                                         alert("Saved!");

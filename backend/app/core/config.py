@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     GROQ_API_KEY: Optional[str] = None  # Ключ API для AI генерации
     
     # Gemini Configuration
-    IS_GEMINI: bool = False             # Флаг использования Gemini вместо Groq
+    IS_GEMINI: bool = True            # Флаг использования Gemini вместо Groq
     GEMINI_API_KEY: Optional[str] = None # Ключ API для Google Gemini
     
     class Config:

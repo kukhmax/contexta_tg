@@ -47,7 +47,7 @@ const Vocabulary: React.FC = () => {
 
     return (
         <div className="container" style={{ paddingTop: '20px' }}>
-            <h2 style={{ marginBottom: '20px', color: 'var(--color-accent-primary)' }}>My Vocabulary</h2>
+            <h2 style={{ marginBottom: '20px', color: 'var(--color-accent-primary)' }}>{t('my_vocabulary')}</h2>
 
             {isLoading ? <p>{t('loading')}</p> : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

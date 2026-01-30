@@ -18,6 +18,7 @@ class WordBase(BaseModel):
 
 class WordCreate(WordBase):
     telegram_id: int # Для MVP
+    native_language: Optional[str] = "ru" # Язык пользователя для перевода
 
 class WordInDB(WordBase):
     id: int
@@ -41,7 +42,7 @@ def read_words(
     return word_service.get_words_by_user(db, user.id)
 
 @router.post("/", response_model=WordInDB)
-def create_word(
+async def create_word(
     word_in: WordCreate,
     db: Session = Depends(get_db)
 ):
@@ -52,12 +53,38 @@ def create_word(
     if not user:
          raise HTTPException(status_code=404, detail="User not found")
          
+    
+    # Enrich word info via AI
+    from app.services import ai_service
+    
+    # Значение по умолчанию если enrichment не сработает
+    final_translation = word_in.translation
+    final_context = word_in.context
+    
+    try:
+        # Пытаемся получить перевод и спяжения через AI
+        enrichment = await ai_service.enrich_word_info(
+            word=word_in.word,
+            context=word_in.context or "",
+            native_lang=word_in.native_language or "ru"
+        )
+        
+        if enrichment.get("translation"):
+            final_translation = enrichment.get("translation")
+            
+        if enrichment.get("is_verb") and enrichment.get("conjugations"):
+            # Если это глагол, заменяем контекст на спряжения
+            final_context = f"Conjugations (Present): {enrichment.get('conjugations')}"
+            
+    except Exception as e:
+        print(f"Enrichment failed: {e}")
+
     return word_service.create_word(
         db=db,
         word=word_in.word,
         user_id=user.id,
-        translation=word_in.translation,
-        context=word_in.context
+        translation=final_translation,
+        context=final_context
     )
 
 @router.delete("/{word_id}")
