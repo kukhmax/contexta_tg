@@ -18,7 +18,8 @@ const resources = {
             "show_translation": "Show Translation",
             "hide_translation": "Hide Translation",
             "listen": "Listen",
-            "my_vocabulary": "My Vocabulary"
+            "my_vocabulary": "My Vocabulary",
+            "delete_story": "Delete"
         }
     },
     ru: {
@@ -36,7 +37,8 @@ const resources = {
             "show_translation": "Показать перевод",
             "hide_translation": "Скрыть перевод",
             "listen": "Слушать",
-            "my_vocabulary": "Мой Словарь"
+            "my_vocabulary": "Мой Словарь",
+            "delete_story": "Удалить"
         }
     }
 };

@@ -84,3 +84,22 @@ def get_my_stories(
          raise HTTPException(status_code=404, detail="Пользователь не найден")
          
     return db.query(Story).filter(Story.user_id == user.id).order_by(Story.created_at.desc()).all()
+
+@router.delete("/{story_id}")
+def delete_story(
+    story_id: int,
+    telegram_id: int,
+    db: Session = Depends(get_db)
+):
+    """Удалить историю"""
+    user = db.query(User).filter(User.telegram_id == telegram_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+        
+    story = db.query(Story).filter(Story.id == story_id, Story.user_id == user.id).first()
+    if not story:
+        raise HTTPException(status_code=404, detail="История не найдена")
+        
+    db.delete(story)
+    db.commit()
+    return {"ok": True}
