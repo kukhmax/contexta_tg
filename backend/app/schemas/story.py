@@ -13,6 +13,7 @@ class StoryResponse(BaseModel):
     """Схема ответа с историей"""
     id: int
     content: str
+    translation: Optional[str] = None
     highlighted_words: List[str]
     input_word: str
     created_at: datetime

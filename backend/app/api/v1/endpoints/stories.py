@@ -64,6 +64,7 @@ async def generate_story(
         language_level=request.level,
         target_language=request.target_language,
         content=ai_result.get("content", ""),
+        translation=ai_result.get("translation", ""),
         highlighted_words=ai_result.get("highlighted_words", [])
     )
     db.add(db_story)

@@ -18,6 +18,7 @@ class Story(Base):
     target_language = Column(String, nullable=False)  # Изучаемый язык
     
     content = Column(Text, nullable=False)            # Текст истории
+    translation = Column(Text, nullable=True)         # Перевод истории
     highlighted_words = Column(JSON, nullable=True)   # Список слов для подсветки (JSON)
     
     created_at = Column(DateTime, default=datetime.utcnow) # Дата создания

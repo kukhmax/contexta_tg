@@ -11,6 +11,7 @@ const Home: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [story, setStory] = useState<any>(null); // TODO: Type properly
     const [error, setError] = useState<string | null>(null);
+    const [showTranslation, setShowTranslation] = useState(false);
 
     const handleGenerate = async () => {
         if (!word) return;
@@ -18,6 +19,7 @@ const Home: React.FC = () => {
         setIsLoading(true);
         setError(null);
         setStory(null);
+        setShowTranslation(false);
 
         try {
             const telegramId = WebApp.initDataUnsafe.user?.id || 123456789; // Fallback for dev
@@ -174,6 +176,24 @@ const Home: React.FC = () => {
                         </p>
 
                         <AudioPlayer storyId={story.id} targetLang={story.target_language} />
+
+                        {story.translation && (
+                            <div style={{ marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '16px' }}>
+                                <button
+                                    className="btn btn-outline"
+                                    style={{ width: '100%', marginBottom: '12px' }}
+                                    onClick={() => setShowTranslation(!showTranslation)}
+                                >
+                                    {showTranslation ? (t('hide_translation') || "Hide Translation") : (t('show_translation') || "Translate / Перевести")}
+                                </button>
+
+                                {showTranslation && (
+                                    <p style={{ color: 'var(--color-text-secondary)', fontStyle: 'italic', whiteSpace: 'pre-wrap' }}>
+                                        {story.translation}
+                                    </p>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
