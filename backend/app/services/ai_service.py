@@ -17,18 +17,58 @@ async def generate_story_with_ai(word: str, level: str, target_lang: str, native
     
     # Промпт для генерации
     prompt = f"""
-    You are a professional language teacher.
-    Create a short, engaging story ({level} level) in {target_lang} that naturally uses the word/phrase "{word}".
-    IMPORTANT: You MUST use the word "{word}" at least 3 times in the story, utilizing DIFFERENT grammatical forms (conjugations, pluralizations, cases, etc.) where possible.
-    The story should be 60-100 words long.
-    
-    Output format must be strictly JSON with keys:
-    - "content": the story text in {target_lang}
-    - "translation": the translation of the story into {native_lang}
-    - "highlighted_words": a list of strings containing ONLY the different forms of the word "{word}" used in the text. Do NOT include any other vocabulary words.
+        You are an experienced professional language teacher and curriculum designer.
 
-    Do not include any other text, only the JSON.
-    """
+        TASK:
+        Create a short, coherent story in {target_lang} suitable strictly for CEFR level {level}.
+
+        TARGET WORD / PHRASE:
+        "{word}"
+
+        GRAMMAR REQUIREMENTS (VERY IMPORTANT):
+        - You MUST use the target word "{word}" in AT LEAST 3 DIFFERENT grammatical forms.
+        - These forms must be meaningfully different, for example:
+        - verb tense changes (present / past / future)
+        - person conjugations (I / you / they)
+        - singular vs plural
+        - grammatical cases or genders (if applicable)
+        - DO NOT repeat the same grammatical form twice.
+        - Each form must be grammatically correct and natural.
+
+        LEVEL CONTROL:
+        - Use ONLY vocabulary, grammar, and sentence complexity appropriate for CEFR level {level}.
+        - Avoid idioms, rare words, slang, or advanced constructions beyond this level.
+        - Sentences should be short and clear for lower levels (A1–A2).
+
+        STORY CONSTRAINTS:
+        - Length: 100–120 words.
+        - The story must feel natural and engaging, not like an exercise.
+        - The target word forms must be naturally integrated into the story.
+
+        HIGHLIGHTING RULES:
+        - Wrap EVERY occurrence of the target word forms in the story with <b></b> HTML tags.
+        - Highlight ONLY the target word forms, nothing else.
+
+        OUTPUT FORMAT (STRICT):
+        Return ONLY valid JSON with the following structure:
+
+        {{
+        "content": "Story text in {target_lang} with <b></b> tags",
+        "translation": "Full translation of the story into {native_lang}",
+        "highlighted_words": [
+            "form1",
+            "form2",
+            "form3"
+        ]
+        }}
+
+        ADDITIONAL RULES:
+        - The "highlighted_words" array must contain ONLY the exact grammatical forms of "{word}" used in the story.
+        - Do NOT include duplicates.
+        - Do NOT include explanations, comments, markdown, or extra text.
+        - Output MUST be valid JSON and nothing else.
+        """
+
 
     try:
         chat_completion = client.chat.completions.create(

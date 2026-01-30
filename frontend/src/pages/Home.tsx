@@ -4,7 +4,7 @@ import WebApp from '@twa-dev/sdk';
 import AudioPlayer from '../components/AudioPlayer';
 
 const Home: React.FC = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [word, setWord] = useState('');
     const [level, setLevel] = useState('B1');
     const [targetLang, setTargetLang] = useState('en');
@@ -37,6 +37,7 @@ const Home: React.FC = () => {
                     word,
                     level,
                     target_language: targetLang,
+                    native_language: i18n.language,
                     telegram_id: telegramId
                 })
             });
@@ -184,7 +185,7 @@ const Home: React.FC = () => {
                                     style={{ width: '100%', marginBottom: '12px' }}
                                     onClick={() => setShowTranslation(!showTranslation)}
                                 >
-                                    {showTranslation ? (t('hide_translation') || "Hide Translation") : (t('show_translation') || "Translate / Перевести")}
+                                    {showTranslation ? t('hide_translation') : t('show_translation')}
                                 </button>
 
                                 {showTranslation && (

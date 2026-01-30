@@ -14,7 +14,9 @@ const resources = {
             "select_level": "Select Level",
             "select_language": "Select Language",
             "loading": "Loading...",
-            "error": "Something went wrong"
+            "error": "Something went wrong",
+            "show_translation": "Show Translation",
+            "hide_translation": "Hide Translation"
         }
     },
     ru: {
@@ -28,7 +30,9 @@ const resources = {
             "select_level": "Выберите уровень",
             "select_language": "Выберите язык",
             "loading": "Загрузка...",
-            "error": "Что-то пошло не так"
+            "error": "Что-то пошло не так",
+            "show_translation": "Показать перевод",
+            "hide_translation": "Скрыть перевод"
         }
     }
 };
