@@ -41,7 +41,7 @@ async def generate_story_with_ai(word: str, level: str, target_lang: str, native
                     "content": prompt,
                 }
             ],
-            model="llama-3.3-70b-versatile", # Mixtral deprecated, using Llama 3.3
+            model="meta-llama/llama-guard-4-12b", # Mixtral deprecated, using Llama 3.3
             temperature=0.7,
             response_format={"type": "json_object"},
         )
